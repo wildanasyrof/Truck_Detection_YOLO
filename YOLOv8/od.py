@@ -1,7 +1,7 @@
 import cv2
 import pandas as pd
 from ultralytics import YOLO
-from utils import global_function as utils
+from common import global_function as utils
 
 def start(image):
 

@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from utils import global_function as utils
+from common import global_function as utils
 
 
 def start(img):

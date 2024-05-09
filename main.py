@@ -2,9 +2,12 @@ import tkinter as tk
 from tkinter import filedialog
 import importlib
 
+import sys
+sys.path.insert(0, './yolov7')
+
 def detection(version_truck, version_od, source_path):
-    od_module = importlib.import_module(f'{version_od}.od')
-    truck_module = importlib.import_module(f'{version_truck}.truck')
+    od_module = importlib.import_module(f'{version_od.lower()}.od')
+    truck_module = importlib.import_module(f'{version_truck.lower()}.truck')
 
     od_func = getattr(od_module, 'start', None)
     truck_func = getattr(truck_module, 'start', None)
@@ -54,7 +57,7 @@ yolo_frame1.pack(pady=10)
 yolo_label1 = tk.Label(yolo_frame1, text="Select Yolo version for Truck Detection:")
 yolo_label1.pack(side=tk.LEFT, padx=10)
 
-yolo_dropdown1 = tk.OptionMenu(yolo_frame1, yolo_var1, "YOLOv5", "YOLOv6", "YOLOv8")
+yolo_dropdown1 = tk.OptionMenu(yolo_frame1, yolo_var1, "YOLOv5", "YOLOv6", "YOLOv7", "YOLOv8")
 yolo_dropdown1.pack(side=tk.LEFT, padx=10)
 
 yolo_frame2 = tk.Frame(root)
@@ -63,7 +66,7 @@ yolo_frame2.pack(pady=10)
 yolo_label2 = tk.Label(yolo_frame2, text="Select Yolo version for OD Detection:")
 yolo_label2.pack(side=tk.LEFT, padx=10)
 
-yolo_dropdown2 = tk.OptionMenu(yolo_frame2, yolo_var2, "YOLOv5", "YOLOv6", "YOLOv8")
+yolo_dropdown2 = tk.OptionMenu(yolo_frame2, yolo_var2, "YOLOv5", "YOLOv6", "YOLOv7", "YOLOv8")
 yolo_dropdown2.pack(side=tk.LEFT, padx=10)
 
 process_button = tk.Button(root, text="Process", command=process_file)
