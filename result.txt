@@ -1,0 +1,24 @@
+#### YOLOv8 ####
+Processing Time: 400.97 seconds
+Average FPS: 4.91
+Maximum Confidence Score Truck: 0.98
+Maximum Confidence Score OD: 0.97
+
+#### YOLOv7 ####
+Processing Time: 1114.77 seconds
+Average FPS: 1.58
+Maximum Confidence Score Truck: 0.99
+Maximum Confidence Score OD: 0.98
+
+#### YOLOv5 ####
+Processing Time: 561.75 seconds
+Average FPS: 3.25
+Maximum Confidence Score Truck: 0.97
+Maximum Confidence Score OD: 0.97
+
+#### YOLOv6 ####
+Processing Time: 524.66 seconds
+Average FPS: 3.56
+Maximum Confidence Score Truck: 0.99
+Maximum Confidence Score OD: 0.99
+

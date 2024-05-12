@@ -7,6 +7,9 @@ from yolov7.utils.plots import plot_one_box
 from yolov7.utils.datasets import letterbox
 from common import global_function
 
+import sys
+sys.path.insert(0, './yolov7')
+
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def load_model():
@@ -58,4 +61,6 @@ def start(image):
                     cv2.putText(frame, f'Label: {response.text}', (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
     cv2.imshow('Deteksi OD', frame)
+
+    return conf
                 

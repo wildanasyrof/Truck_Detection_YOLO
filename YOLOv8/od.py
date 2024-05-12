@@ -26,6 +26,7 @@ def start(image):
         y2 = int(row[3])
         d = int(row[5])
         c = class_list[d]
+        confidence = row[4]  # Confidence score
 
         w = int(row[2] * width)
         h = int(row[3] * height)
@@ -47,4 +48,6 @@ def start(image):
             cv2.putText(src, f'Label: {response.text}', (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
     cv2.imshow('Deteksi OD', src)
+
+    return confidence
 

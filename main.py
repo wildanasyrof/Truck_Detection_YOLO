@@ -2,9 +2,6 @@ import tkinter as tk
 from tkinter import filedialog
 import importlib
 
-import sys
-sys.path.insert(0, './yolov7')
-
 def detection(version_truck, version_od, source_path):
     od_module = importlib.import_module(f'{version_od.lower()}.od')
     truck_module = importlib.import_module(f'{version_truck.lower()}.truck')

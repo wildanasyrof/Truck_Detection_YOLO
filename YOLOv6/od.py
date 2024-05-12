@@ -20,27 +20,45 @@ def start(img):
     confidences = []
     boxes = []
     rows = detections.shape[0]
+    conf = 0.0
 
     img_width, img_height = img.shape[1], img.shape[0]
     x_scale = img_width / 640
     y_scale = img_height / 640
 
-    for i in range(rows):
-        row = detections[i]
-        confidence = row[4]
-        if confidence > 0.5:
-            classes_score = row[5:]
-            ind = np.argmax(classes_score)
-            if classes_score[ind] > 0.2:
-                classes_ids.append(ind)
-                confidences.append(confidence)
-                cx, cy, w, h = row[:4]
-                x1 = int((cx - w / 2) * x_scale)
-                y1 = int((cy - h / 2) * y_scale)
-                width = int(w * x_scale)
-                height = int(h * y_scale)
-                box = np.array([x1, y1, width, height])
-                boxes.append(box)
+    for detection in range(rows):
+            row = detections[detection]
+            if row[4] > 0.2:
+                scores = row[5:]
+                classId = np.argmax(scores)
+                confidence = scores[classId] * row[4]
+                if confidence > 0.2:
+                    cx, cy, w, h = row[:4]
+                    x1 = int((cx - w / 2) * x_scale)
+                    y1 = int((cy - h / 2) * y_scale)
+                    width = int(w * x_scale)
+                    height = int(h * y_scale)
+
+                    confidences.append(float(confidence))
+                    boxes.append([x1, y1, width, height])
+                    classes_ids.append(classId)
+
+    # for i in range(rows):
+    #     row = detections[i]
+    #     confidence = row[4]
+    #     if confidence > 0.5:
+    #         classes_score = row[5:]
+    #         ind = np.argmax(classes_score)
+    #         if classes_score[ind] > 0.2:
+    #             classes_ids.append(ind)
+    #             confidences.append(confidence)
+    #             cx, cy, w, h = row[:4]
+    #             x1 = int((cx - w / 2) * x_scale)
+    #             y1 = int((cy - h / 2) * y_scale)
+    #             width = int(w * x_scale)
+    #             height = int(h * y_scale)
+    #             box = np.array([x1, y1, width, height])
+    #             boxes.append(box)
 
     indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.2, 0.2)
 
@@ -62,3 +80,5 @@ def start(img):
             cv2.putText(img, f'Label: {response.text}', (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
     
     cv2.imshow("Deteksi OD", img)    
+
+    return conf

@@ -6,6 +6,11 @@ from numpy import random
 from yolov7.utils.general import non_max_suppression, scale_coords, xyxy2xywh
 from yolov7.utils.plots import plot_one_box
 from yolov7.utils.datasets import letterbox
+import tkinter as tk
+from tkinter import messagebox
+
+import sys
+sys.path.insert(0, './yolov7')
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -32,8 +37,11 @@ def start(source_path, od_function):
 
     total_fps = 0.0
     num_frames = 0
+    max_confidence = 0.0
+    max_confidence_od = 0.0
 
     start_time = time.time()  # Initialize start_time
+    start_processing_time = time.time()
 
     object_detected = False  # Flag to track if object has been detected
 
@@ -49,7 +57,7 @@ def start(source_path, od_function):
         if count % 3 != 0:
             continue
 
-        frame = cv2.resize(frame, (900, 720))
+        frame = cv2.resize(frame, (640, 640))
         img = letterbox(frame, 640, stride=64, auto=True)[0]
         img = img[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
         img = np.ascontiguousarray(img)
@@ -73,18 +81,24 @@ def start(source_path, od_function):
                 for *xyxy, conf, cls in reversed(det):
                     label = f'{names[int(cls)]} {conf:.2f}'
                     # Check if the low part of the bounding box has the same position as the line
-                    if (line_position - 10) < int(xyxy[3]) and names[int(cls)] == 'truckA' and not object_detected:
+                    if (line_position - 10) < int(xyxy[3]) < line_position and names[int(cls)] == 'truckA' and not object_detected:
                         # set object detected True
                         object_detected = True
                         # Export the cropped image
                         object_image = frame[int(xyxy[1]):int(xyxy[3]), int(xyxy[0]):int(xyxy[2])]
                         object_image_resized = cv2.resize(object_image, (640, 640))
-                        od_function(object_image_resized)
+                        confidence_od = od_function(object_image_resized)
+
+                        if confidence_od > max_confidence_od:
+                            max_confidence_od = confidence_od
 
                     if int(xyxy[3]) > (line_position + 6):
                         object_detected = False
                     
                     plot_one_box(xyxy, frame, label=label, color=colors[int(cls)], line_thickness=2)
+
+                    if conf > max_confidence:
+                       max_confidence = conf
 
         # Draw the line
         cv2.line(frame, (0, line_position), (frame.shape[1], line_position), (0, 255, 0), 2)
@@ -111,3 +125,21 @@ def start(source_path, od_function):
 
     cap.release()
     cv2.destroyAllWindows()
+
+         # Calculate processing time after the video ends
+    end_processing_time = time.time()
+    processing_time = end_processing_time - start_processing_time
+
+    # Display dialog box with processing information
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+
+    messagebox.showinfo("Processing Information", f"Processing Time: {processing_time:.2f} seconds\nAverage FPS: {avg_fps:.2f}\nMaximum Confidence Score Truck: {max_confidence:.2f}\nMaximum Confidence Score OD: {max_confidence_od:.2f}")
+
+    # Save processing information to a text file
+    with open("result.txt", "a") as file:
+        file.write(f"#### YOLOv7 ####\n")
+        file.write(f"Processing Time: {processing_time:.2f} seconds\n")
+        file.write(f"Average FPS: {avg_fps:.2f}\n")
+        file.write(f"Maximum Confidence Score Truck: {max_confidence:.2f}\n")
+        file.write(f"Maximum Confidence Score OD: {max_confidence_od:.2f}\n\n")

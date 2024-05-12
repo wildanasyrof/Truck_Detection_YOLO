@@ -19,6 +19,7 @@ def start(img):
     confidences = []
     boxes = []
     rows = detections.shape[0]
+    confidence = 0.0
 
     img_width, img_height = img.shape[1], img.shape[0]
     x_scale = img_width/640
@@ -44,9 +45,11 @@ def start(img):
     indices = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.5)
 
     for i in indices:
+        conf = 0.0
         x1, y1, w, h = boxes[i]
         label = classes[classes_ids[i]]
         conf = confidences[i]
+        confidence = conf
         text = label + "{:.2f}".format(conf)
         cv2.rectangle(img, (x1, y1), (x1+w, y1+h), (255, 0, 0), 2)
         cv2.putText(img, f'Label: {text}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
@@ -61,3 +64,5 @@ def start(img):
             cv2.putText(img, f'Label: {response.text}', (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
     cv2.imshow("Deteksi OD", img)
+
+    return confidence
